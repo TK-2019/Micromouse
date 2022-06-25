@@ -6,6 +6,7 @@ int board[6][6]={
 	{15,9,6,1,7,5},
 	{14,8,11,14,1,12}
 };
+
 int adj[36][4]={0};
 
 int* give_adj(int i, int j)
@@ -53,17 +54,58 @@ void update_adj()
 	}
 }
 
+int * dfs()
+{
+	bool visited[36]={0};
+	int dist[6][6]={INT8_MAX};
+	dist[0][0]=0;
+	while(visited[35]==0)
+	{
+		int min=INT8_MAX,cell=1;
+
+		for(int i=0;i<6;i++) //to find the cell which has the minimum distace in the array "dist"
+		{
+			for (int j=0;j<6;j++)
+			{
+				if (min>dist[i][j] && visited[i*6+j]==0)
+					{
+						min=dist[i][j];
+						cell=6*i+j+1;
+					}
+			}
+		Serial.println(cell);
+		}
+		visited[cell-1]=1;
+		for(int i=0;i<4;i++)
+		{	
+			int newcell=adj[cell-1][i];
+			if (newcell==0)
+				break;
+			dist[(newcell-1)/6][(newcell-1)%6]=dist[(cell-1)/6][(cell-1)%6]+1;
+		}
+	}
+	for(int i=0;i<6;i++)
+	{
+		for(int j=0;j<6;j++)
+		{
+			Serial.print(dist[i][j]);
+		}
+		Serial.println();
+	}
+
+
+}
+
 
 
 void setup() {
   Serial.begin(9600);
   update_adj();
-  for (int i=0;i<36;i++)
-  	{
-  		for(int j=0;j<4;j++)
-  			Serial.print(adj[i][j]);
-  		Serial.println();
-  	}
+  
+  int path[36];
+  Serial.println("a");
+  dfs();
+  Serial.println("a");
 }
 
 void loop() {
