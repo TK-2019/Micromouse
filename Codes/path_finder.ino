@@ -6,7 +6,6 @@ int board[6][6]={
 	{15,9,6,1,7,5},
 	{14,8,11,14,1,12}
 };
-
 int adj[36][4]={0};
 
 int* give_adj(int i, int j)
@@ -107,6 +106,7 @@ void setup() {
   dfs();
   Serial.println("a");
 }
+
 
 void loop() {
 }
