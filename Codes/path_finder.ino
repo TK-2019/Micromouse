@@ -6,6 +6,7 @@ int board[6][6]={
 	{15,9,6,1,7,5},
 	{14,8,11,14,1,12}
 };
+
 int adj[36][4]={0};
 
 int* give_adj(int i, int j)
@@ -55,8 +56,13 @@ void update_adj()
 
 int * dfs()
 {
-	bool visited[36]={0};
-	int dist[6][6]={INT8_MAX};
+	bool visited[36];
+	for(int i=0;i<36;i++)
+		visited[i]=0;
+	int dist[6][6];
+	for(int i=0;i<6;i++)
+		for (int j=0;j<6;j++)
+			dist[i][j]=99;
 	dist[0][0]=0;
 	while(visited[35]==0)
 	{
@@ -72,12 +78,13 @@ int * dfs()
 						cell=6*i+j+1;
 					}
 			}
-		Serial.println(cell);
 		}
 		visited[cell-1]=1;
 		for(int i=0;i<4;i++)
 		{	
 			int newcell=adj[cell-1][i];
+			if (visited[newcell-1]==1)
+				continue;
 			if (newcell==0)
 				break;
 			dist[(newcell-1)/6][(newcell-1)%6]=dist[(cell-1)/6][(cell-1)%6]+1;
@@ -88,10 +95,47 @@ int * dfs()
 		for(int j=0;j<6;j++)
 		{
 			Serial.print(dist[i][j]);
+			Serial.print("  ");
 		}
 		Serial.println();
 	}
 
+	int cell,d=INT8_MAX;
+	for (int i=0;i<2;i++)
+	{
+		for(int j=0;j<2;j++)
+		{
+			if (d>dist[i+2][j+2])
+				{
+					d=dist[i+2][j+2];
+					cell=(i+2)*6+j+3;
+				}
+		}
+	}
+	int * path,index=0;
+	path=(int *)malloc(sizeof(int)*d);
+	path[0]=cell;
+	while(d>=0)
+	{
+		d=d-1;
+		for (int i=0;i<4;i++)
+		{
+			int adjac=adj[path[index]][i];
+			if (adjac==0)
+				break;
+			if (d==dist[(adjac-1)/6][(adjac-1)%6])
+			{
+				path[index+1]=adjac;
+				Serial.println(adjac);
+				break;
+			}
+		}
+		index++;
+	}
+	for (index=index-1;index>=0;index--)
+	{
+		Serial.println(path[index]);
+	}
 
 }
 
@@ -102,11 +146,8 @@ void setup() {
   update_adj();
   
   int path[36];
-  Serial.println("a");
   dfs();
-  Serial.println("a");
 }
-
 
 void loop() {
 }
